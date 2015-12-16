@@ -2,37 +2,61 @@
 
 import numpy
 import sys
+import pickle
 
 class VirtualMachine():
     
-    def __init__(self, debug=False):
-        print "Booting MnesisVM..."
+    def __init__(self, debug=False, log=None):
         self.memory = numpy.zeros((32776,), dtype=numpy.dtype("<u2")) # Includes the registers 
         self.stack = []
         self.running = False
         self.program_counter = 0
         self.debug = debug
-        print "Ready to go!"
+        self.logfile = log
+        self.log("MnestisVM ready to go!")
 
     def load_program(self, filename):
-        print "Loading program: %s" % (filename,)
+        self.log("Loading program: %s" % (filename,))
         program = numpy.fromfile(filename.encode(), dtype=numpy.dtype("<u2"))
         self.memory[0:len(program)] = program.copy()
-        print "Program loaded."
+        self.log("Program loaded.")
 
     def run(self):
-        print "\nRunning program:"
+        self.log("\nRunning program:")
         self.running = True
-        print "--------------------S T A R T--------------------"
+        self.log("--------------------S T A R T--------------------")
         while self.running:
             if self.debug==True:
                 next_op = self.memory[self.program_counter]
-                print " // DEBUG *** PC: %s, OP: %s, ARGS:" % (self.program_counter, VirtualMachine.debug_values[next_op]["name"]),
-                print self.memory[self.program_counter+1: self.program_counter + VirtualMachine.debug_values[next_op]["args"] + 1], 
-                print "Reg:", self.memory[32768:],
-                print "Stack:", self.stack
+                self.log("PC: %s, OP: %s, ARGS: " % (self.program_counter, VirtualMachine.debug_values[next_op]["name"]),
+                         str(self.memory[self.program_counter+1: self.program_counter + VirtualMachine.debug_values[next_op]["args"] + 1]), 
+                         "Reg: " + str(self.memory[32768:]),
+                         "Stack:" + str(self.stack))
             VirtualMachine.opcodes[self.memory[self.program_counter]](self)
-        print "-------------------- H A L T --------------------"
+        self.log("-------------------- H A L T --------------------")
+
+    def log(self, *msgs):
+        if not debug:
+            return
+        for msg in msgs:
+            self.logfile.write(str(msg))
+        self.logfile.write("\n")
+        self.logfile.flush()
+
+    def dump(self, dump_loc):
+        dump_file = open(dump_loc, "w")
+        dump_file.write(pickle.dumps({"memory": self.memory,
+                                      "stack": self.stack,
+                                      "program_counter": self.program_counter}))
+        dump_file.flush()
+
+    def load_dump(self, dump_loc):
+        dump_file = open(dump_loc, "r")
+        contents = pickle.loads(dump_file.read())
+        self.memory = contents["memory"]
+        self.stack = contents["stack"]
+        self.program_counter = contents["program_counter"]
+        dump_file.close()
 
     def get_arg(self, index):
         arg = self.memory[self.program_counter + index]
@@ -232,12 +256,22 @@ class VirtualMachine():
 if __name__=="__main__":
     from sys import argv
 
-    if len(argv) > 1:
+    if len(argv) > 2:
         debug = True
+        log_filename = argv[2]
+        log_file = open(log_filename, "w+")
     else:
         debug = False
+        log_file = None
 
-    vm = VirtualMachine(debug=debug)
-    vm.load_program("challenge.bin")
+    vm = VirtualMachine(debug=debug, log=log_file)
+    vm.load_dump(argv[1])
 
-    vm.run()
+    try:
+        vm.run()
+    except KeyboardInterrupt:
+        dump_p = raw_input("Dump memory? (y/N): ")
+        if dump_p.lower() == "y":
+            dump_loc = raw_input("Where would you like to dump it? ")
+            vm.dump(dump_loc)
+            
