@@ -127,6 +127,11 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = self.memory[self.get_arg(2)]
         self.program_counter += 3
 
+    def wmem(self): # OPCODE 15
+        """ Write b to a """
+        self.memory[self.get_arg(1)] = self.get_arg(2)
+        self.program_counter += 3
+
     def call(self): # OPCODE 17
         """ Push pc+1 to stack, branch to a """
         self.stack.append(self.program_counter+2)
@@ -158,6 +163,7 @@ class VirtualMachine():
                13: bitwise_or,
                14: bitwise_not,
                15: rmem,
+               16: wmem,
                17: call,
                19: out,
                21: noop,
@@ -194,6 +200,8 @@ class VirtualMachine():
                     14: {"name": "not",
                          "args": 2},
                     15: {"name": "rmem",
+                         "args": 2},
+                    16: {"name": "wmem",
                          "args": 2},
                     17: {"name": "call",
                          "args": 1},
