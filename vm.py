@@ -105,6 +105,12 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = self.get_arg(2) | self.get_arg(3)
         self.program_counter += 4
 
+    def bitwise_not(self): # OPCODE 14
+        """ a = not b"""
+        # This one's a bit more complicated, because we can't just use the standard not operator
+        self.memory[self.get_register(1)] = self.get_arg(2) ^ 32767
+        self.program_counter += 3
+
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
         sys.stdout.write(chr(self.get_arg(1)))
@@ -127,6 +133,7 @@ class VirtualMachine():
                9: add,
                12: bitwise_and,
                13: bitwise_or,
+               14: bitwise_not,
                19: out,
                21: noop,
                }
@@ -155,6 +162,8 @@ class VirtualMachine():
                          "args": 3},
                     13: {"name": "or",
                          "args": 3},
+                    14: {"name": "not",
+                         "args": 2},
                     19: {"name": "out",
                          "args": 1},
                     21: {"name": "noop",
