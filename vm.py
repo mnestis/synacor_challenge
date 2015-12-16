@@ -93,7 +93,7 @@ class VirtualMachine():
 
     def add(self): # OPCODE 9
         """ a=b+c """
-        self.memory[self.get_register(1)] = self.get_arg(2) + self.get_arg(3) % 32768
+        self.memory[self.get_register(1)] = (self.get_arg(2) + self.get_arg(3)) % 32768
         self.program_counter += 4
 
     def bitwise_and(self): # OPCODE 12
