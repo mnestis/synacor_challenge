@@ -35,6 +35,13 @@ class VirtualMachine():
         """ Moves to the instruction pointed to by the first operand. """
         self.program_counter = self.memory[self.program_counter+1]
 
+    def jt(self): # OPCODE 7
+        """ If a is not 0, jump to b. """
+        if self.memory[self.program_counter+1] != 0:
+            self.program_counter = self.memory[self.program_counter+2]
+        else:
+            self.program_counter += 3
+
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
         sys.stdout.write(chr(self.memory[self.program_counter+1]))
@@ -47,6 +54,7 @@ class VirtualMachine():
 
     opcodes = {0: halt,
                6: jmp,
+               7: jt,
                19: out,
                21: noop}
 
