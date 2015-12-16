@@ -96,6 +96,11 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = (self.get_arg(2) + self.get_arg(3)) % 32768
         self.program_counter += 4
 
+    def mult(self): # OPCODE 10
+        """ a=b*c """
+        self.memory[self.get_register(1)] = (self.get_arg(2) * self.get_arg(3)) % 32768
+        self.program_counter += 4
+
     def bitwise_and(self): # OPCODE 12
         """ a = b&c """
         self.memory[self.get_register(1)] = self.get_arg(2) & self.get_arg(3)
@@ -137,6 +142,7 @@ class VirtualMachine():
                7: jt,
                8: jf,
                9: add,
+               10: mult,
                12: bitwise_and,
                13: bitwise_or,
                14: bitwise_not,
@@ -165,6 +171,8 @@ class VirtualMachine():
                         "args": 2},
                     9: {"name": "add",
                         "args": 3},
+                    10: {"name": "mult",
+                         "args": 3},
                     12: {"name": "and",
                          "args": 3},
                     13: {"name": "or",
