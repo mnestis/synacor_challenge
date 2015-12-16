@@ -150,6 +150,11 @@ class VirtualMachine():
         sys.stdout.flush()
         self.program_counter += 2
 
+    def char_in(self): # OPCODE 20
+        """ Read in a single character from the console. """
+        self.memory[self.get_register(1)] = ord(sys.stdin.read(1))
+        self.program_counter += 2
+
     def noop(self): # OPCODE 21
         """ Does nothing. """
         self.program_counter += 1
@@ -174,6 +179,7 @@ class VirtualMachine():
                17: call,
                18: ret,
                19: out,
+               20: char_in,
                21: noop,
                }
 
@@ -216,6 +222,8 @@ class VirtualMachine():
                     18: {"name": "ret",
                          "args": 0},
                     19: {"name": "out",
+                         "args": 1},
+                    20: {"name": "in",
                          "args": 1},
                     21: {"name": "noop",
                          "args": 0},
