@@ -137,6 +137,13 @@ class VirtualMachine():
         self.stack.append(self.program_counter+2)
         self.program_counter = self.get_arg(1)
 
+    def ret(self): # OPCODE 18
+        """ Pop from stack and jump to it """
+        if len(self.stack) != 0:
+            self.program_counter = self.stack.pop()
+        else:
+            self.halt()    
+
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
         sys.stdout.write(chr(self.get_arg(1)))
@@ -165,6 +172,7 @@ class VirtualMachine():
                15: rmem,
                16: wmem,
                17: call,
+               18: ret,
                19: out,
                21: noop,
                }
@@ -205,6 +213,8 @@ class VirtualMachine():
                          "args": 2},
                     17: {"name": "call",
                          "args": 1},
+                    18: {"name": "ret",
+                         "args": 0},
                     19: {"name": "out",
                          "args": 1},
                     21: {"name": "noop",
