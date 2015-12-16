@@ -7,8 +7,8 @@ class VirtualMachine():
     
     def __init__(self, debug=False):
         print "Booting MnesisVM..."
-        self.memory = numpy.zeros((32775,), dtype=numpy.dtype("<u2")) # Includes the registers 
-        self.stack = []
+        self.memory = numpy.zeros((32776,), dtype=numpy.dtype("<u2")) # Includes the registers 
+        self.stack = [0]
         self.running = False
         self.program_counter = 0
         self.debug = debug
@@ -27,37 +27,58 @@ class VirtualMachine():
         while self.running:
             if self.debug==True:
                 next_op = self.memory[self.program_counter]
-                print "DEBUG *** PC: %s, OP: %s, ARGS:" % (self.program_counter, VirtualMachine.debug_values[next_op]["name"]),
-                print self.memory[self.program_counter+1: self.program_counter + VirtualMachine.debug_values[next_op]["args"] + 1] 
+                print " // DEBUG *** PC: %s, OP: %s, ARGS:" % (self.program_counter, VirtualMachine.debug_values[next_op]["name"]),
+                print self.memory[self.program_counter+1: self.program_counter + VirtualMachine.debug_values[next_op]["args"] + 1], 
+                print "Reg:", self.memory[32768:]
             VirtualMachine.opcodes[self.memory[self.program_counter]](self)
         print "-------------------- H A L T --------------------"
+
+    def get_arg(self, index):
+        arg = self.memory[self.program_counter + index]
+        if arg >= 32768:
+            arg = self.memory[arg]
+        return arg
+
+    def get_register(self, index):
+        return self.memory[self.program_counter + index]
 
     def halt(self): # OPCODE 0
         """ Stops the program from running. """
         self.program_counter += 1
         self.running = False
 
+    def set(self): # OPCODE 1
+        """ Sets register a to value of b """
+        self.memory[self.get_register(1)] = self.get_arg(2)
+        self.program_counter += 3
+
+    def pop(self): # OPCODE 3
+        """ Pop an item from the stack, if there is one, error if there's not. """
+        self.memory[self.get_arg(1)] = self.stack.pop()
+        self.program_counter += 1
+
     def jmp(self): # OPCODE 6
         """ Moves to the instruction pointed to by the first operand. """
-        self.program_counter = self.memory[self.program_counter+1]
+        self.program_counter = self.get_arg(1)
 
     def jt(self): # OPCODE 7
         """ If a is not 0, jump to b. """
-        if self.memory[self.program_counter+1] != 0:
-            self.program_counter = self.memory[self.program_counter+2]
+        
+        if self.get_arg(1) != 0:
+            self.program_counter = self.get_arg(2)
         else:
             self.program_counter += 3
 
     def jf(self): # OPCODE 8
         """ If a is 0, jump to b. """
-        if self.memory[self.program_counter+1] == 0:
-            self.program_counter = self.memory[self.program_counter+2]
+        if self.get_arg(1) == 0:
+            self.program_counter = self.get_arg(2)
         else:
             self.program_counter += 3
 
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
-        sys.stdout.write(chr(self.memory[self.program_counter+1]))
+        sys.stdout.write(chr(self.get_arg(1)))
         sys.stdout.flush()
         self.program_counter += 2
 
@@ -66,6 +87,8 @@ class VirtualMachine():
         self.program_counter += 1
 
     opcodes = {0: halt,
+               1: set,
+               3: pop,
                6: jmp,
                7: jt,
                8: jf,
@@ -75,6 +98,10 @@ class VirtualMachine():
 
     debug_values = {0: {"name": "halt",
                         "args": 0},
+                    1: {"name": "set",
+                        "args": 2},
+                    3: {"name": "pop",
+                        "args": 1},
                     6: {"name": "jmp",
                         "args": 1},
                     7: {"name": "jt",
@@ -89,7 +116,7 @@ class VirtualMachine():
 
 if __name__=="__main__":
 
-    vm = VirtualMachine(debug=False)
+    vm = VirtualMachine(debug=True)
     vm.load_program("challenge.bin")
-    vm.run()
+
     vm.run()
