@@ -4,3 +4,6 @@
 
 # Compiled python
 *.pyc
+
+# My vm dumps
+*.dump
