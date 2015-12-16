@@ -98,7 +98,12 @@ class VirtualMachine():
 
     def mult(self): # OPCODE 10
         """ a=b*c """
-        self.memory[self.get_register(1)] = (self.get_arg(2) * self.get_arg(3)) % 32768
+        self.memory[self.get_register(1)] = (int(self.get_arg(2)) * int(self.get_arg(3))) % 32768
+        self.program_counter += 4
+
+    def mod(self): # OPCODE 11
+        """ a = b%c """
+        self.memory[self.get_register(1)] = self.get_arg(2) % self.get_arg(3)
         self.program_counter += 4
 
     def bitwise_and(self): # OPCODE 12
@@ -115,6 +120,11 @@ class VirtualMachine():
         """ a = not b"""
         # This one's a bit more complicated, because we can't just use the standard not operator
         self.memory[self.get_register(1)] = self.get_arg(2) ^ 32767
+        self.program_counter += 3
+
+    def rmem(self): # OPCODE 15
+        """ Copy from b to a """
+        self.memory[self.get_register(1)] = self.memory[self.get_arg(2)]
         self.program_counter += 3
 
     def call(self): # OPCODE 17
@@ -143,9 +153,11 @@ class VirtualMachine():
                8: jf,
                9: add,
                10: mult,
+               11: mod,
                12: bitwise_and,
                13: bitwise_or,
                14: bitwise_not,
+               15: rmem,
                17: call,
                19: out,
                21: noop,
@@ -173,11 +185,15 @@ class VirtualMachine():
                         "args": 3},
                     10: {"name": "mult",
                          "args": 3},
+                    11: {"name": "mod",
+                         "args": 3},
                     12: {"name": "and",
                          "args": 3},
                     13: {"name": "or",
                          "args": 3},
                     14: {"name": "not",
+                         "args": 2},
+                    15: {"name": "rmem",
                          "args": 2},
                     17: {"name": "call",
                          "args": 1},
