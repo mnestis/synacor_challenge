@@ -265,7 +265,11 @@ if __name__=="__main__":
         log_file = None
 
     vm = VirtualMachine(debug=debug, log=log_file)
-    vm.load_dump(argv[1])
+    
+    if len(argv) > 1:
+        vm.load_dump(argv[1])
+    else:
+        vm.load_program("challenge.bin")
 
     try:
         vm.run()
