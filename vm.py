@@ -100,6 +100,11 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = self.get_arg(2) & self.get_arg(3)
         self.program_counter += 4
 
+    def bitwise_or(self): # OPCODE 13
+        """ a = b|c """
+        self.memory[self.get_register(1)] = self.get_arg(2) | self.get_arg(3)
+        self.program_counter += 4
+
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
         sys.stdout.write(chr(self.get_arg(1)))
@@ -121,6 +126,7 @@ class VirtualMachine():
                8: jf,
                9: add,
                12: bitwise_and,
+               13: bitwise_or,
                19: out,
                21: noop,
                }
@@ -146,6 +152,8 @@ class VirtualMachine():
                     9: {"name": "add",
                         "args": 3},
                     12: {"name": "and",
+                         "args": 3},
+                    13: {"name": "or",
                          "args": 3},
                     19: {"name": "out",
                          "args": 1},
