@@ -29,7 +29,8 @@ class VirtualMachine():
                 next_op = self.memory[self.program_counter]
                 print " // DEBUG *** PC: %s, OP: %s, ARGS:" % (self.program_counter, VirtualMachine.debug_values[next_op]["name"]),
                 print self.memory[self.program_counter+1: self.program_counter + VirtualMachine.debug_values[next_op]["args"] + 1], 
-                print "Reg:", self.memory[32768:]
+                print "Reg:", self.memory[32768:],
+                print "Stack:", self.stack
             VirtualMachine.opcodes[self.memory[self.program_counter]](self)
         print "-------------------- H A L T --------------------"
 
@@ -171,8 +172,14 @@ class VirtualMachine():
                     }
 
 if __name__=="__main__":
+    from sys import argv
 
-    vm = VirtualMachine(debug=False)
+    if len(argv) > 1:
+        debug = True
+    else:
+        debug = False
+
+    vm = VirtualMachine(debug=debug)
     vm.load_program("challenge.bin")
 
     vm.run()
