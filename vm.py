@@ -8,7 +8,7 @@ class VirtualMachine():
     def __init__(self, debug=False):
         print "Booting MnesisVM..."
         self.memory = numpy.zeros((32776,), dtype=numpy.dtype("<u2")) # Includes the registers 
-        self.stack = [0]
+        self.stack = []
         self.running = False
         self.program_counter = 0
         self.debug = debug
@@ -54,8 +54,8 @@ class VirtualMachine():
 
     def pop(self): # OPCODE 3
         """ Pop an item from the stack, if there is one, error if there's not. """
-        self.memory[self.get_arg(1)] = self.stack.pop()
-        self.program_counter += 1
+        self.memory[self.get_register(1)] = self.stack.pop()
+        self.program_counter += 2
 
     def eq(self): # OPCODE 4
         """ a=1 if b==c else a=0 """
