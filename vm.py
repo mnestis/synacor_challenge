@@ -66,6 +66,11 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = 1 if self.get_arg(2) == self.get_arg(3) else 0
         self.program_counter += 4
 
+    def gt(self): # OPCODE 5
+        """ a=1 if b>c else a=0 """
+        self.memory[self.get_register(1)] = 1 if self.get_arg(2) > self.get_arg(3) else 0
+        self.program_counter += 4
+
     def jmp(self): # OPCODE 6
         """ Moves to the instruction pointed to by the first operand. """
         self.program_counter = self.get_arg(1)
@@ -105,6 +110,7 @@ class VirtualMachine():
                2: push,
                3: pop,
                4: eq,
+               5: gt,
                6: jmp,
                7: jt,
                8: jf,
@@ -123,6 +129,8 @@ class VirtualMachine():
                         "args": 1},
                     4: {"name": "eq",
                         "args": 3},
+                    5: {"name": "gt",
+                        "args": 3},
                     6: {"name": "jmp",
                         "args": 1},
                     7: {"name": "jt",
@@ -139,7 +147,7 @@ class VirtualMachine():
 
 if __name__=="__main__":
 
-    vm = VirtualMachine(debug=True)
+    vm = VirtualMachine(debug=False)
     vm.load_program("challenge.bin")
 
     vm.run()
