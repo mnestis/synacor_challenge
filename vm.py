@@ -57,6 +57,11 @@ class VirtualMachine():
         self.memory[self.get_arg(1)] = self.stack.pop()
         self.program_counter += 1
 
+    def eq(self): # OPCODE 4
+        """ a=1 if b==c else a=0 """
+        self.memory[self.get_register(1)] = 1 if self.get_arg(2) == self.get_arg(3) else 0
+        self.program_counter += 4
+
     def jmp(self): # OPCODE 6
         """ Moves to the instruction pointed to by the first operand. """
         self.program_counter = self.get_arg(1)
@@ -76,6 +81,11 @@ class VirtualMachine():
         else:
             self.program_counter += 3
 
+    def add(self): # OPCODE 9
+        """ a=b+c """
+        self.memory[self.get_register(1)] = self.get_arg(2) + self.get_arg(3)
+        self.program_counter += 4
+
     def out(self): # OPCODE 19
         """ Writes a single character to the console. """
         sys.stdout.write(chr(self.get_arg(1)))
@@ -89,9 +99,11 @@ class VirtualMachine():
     opcodes = {0: halt,
                1: set,
                3: pop,
+               4: eq,
                6: jmp,
                7: jt,
                8: jf,
+               9: add,
                19: out,
                21: noop,
                }
@@ -102,12 +114,16 @@ class VirtualMachine():
                         "args": 2},
                     3: {"name": "pop",
                         "args": 1},
+                    4: {"name": "eq",
+                        "args": 3},
                     6: {"name": "jmp",
                         "args": 1},
                     7: {"name": "jt",
                         "args": 2},
                     8: {"name": "jf",
                         "args": 2},
+                    9: {"name": "add",
+                        "args": 3},
                     19: {"name": "out",
                          "args": 1},
                     21: {"name": "noop",
