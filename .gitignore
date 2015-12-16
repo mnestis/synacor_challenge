@@ -1,0 +1,6 @@
+# Emacs files
+\#*\#
+*~
+
+# Compiled python
+*.pyc
