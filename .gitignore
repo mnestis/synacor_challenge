@@ -7,3 +7,6 @@
 
 # My vm dumps
 *.dump
+
+# My log files
+*.log
