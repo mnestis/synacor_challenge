@@ -52,6 +52,10 @@ class VirtualMachine():
         self.memory[self.get_register(1)] = self.get_arg(2)
         self.program_counter += 3
 
+    def push(self): # OPCODE 4
+        self.stack.append(self.get_arg(1))
+        self.program_counter += 2
+
     def pop(self): # OPCODE 3
         """ Pop an item from the stack, if there is one, error if there's not. """
         self.memory[self.get_register(1)] = self.stack.pop()
@@ -98,6 +102,7 @@ class VirtualMachine():
 
     opcodes = {0: halt,
                1: set,
+               2: push,
                3: pop,
                4: eq,
                6: jmp,
@@ -112,6 +117,8 @@ class VirtualMachine():
                         "args": 0},
                     1: {"name": "set",
                         "args": 2},
+                    2: {"name": "push",
+                        "args": 1},
                     3: {"name": "pop",
                         "args": 1},
                     4: {"name": "eq",
