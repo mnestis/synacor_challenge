@@ -19,6 +19,7 @@ def magic(a, b, c):
             return magic(a - 1, magic(a, b -1, c), c)
             
 if __name__=="__main__":
-    for c in range(256):
+    for c in range(32768):
         output = magic(4, 1, c)
-        print output
+        if output==6:
+            print c
