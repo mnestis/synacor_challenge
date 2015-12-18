@@ -1,5 +1,0 @@
-Path through the vault maze:
-
-north east east north
-west south east east 
-west north north east

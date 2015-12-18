@@ -1,0 +1,19 @@
+1. In arch-spec: BbYWAZzhmoaP
+2. Getting three instructions working: DUFABeNuTeDM
+3. Completing self test: DDEUAdBNOmeH
+4. Use tablet: kqVxbWucXXtk
+5. Finding oil: NWEurhnkuohv
+6. Teleported with r7=0: EdbLwGeDplqE
+7. Teleported with r7=?: ?
+8. In vault: OdTvT8UwA8ui
+
+Maze in dungeon:
+     west, south, north
+
+Coins in room:
+     blue, red, shiny, concave, corroded
+
+Path through the vault maze:
+     north east east north
+     west south east east 
+     west north north east 
