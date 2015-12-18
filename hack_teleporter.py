@@ -2,7 +2,7 @@
 
 """
 This is the subroutine at index 6027. From the book in the office, I understand
-that I need to find out which value of c (r7 or 32775) that produces a certain answer.
+that I need to find a value of c (r7 or 32775) that produces a certain answer.
 
 From 5491 I see that the value I'm looking for is 6.
 """
